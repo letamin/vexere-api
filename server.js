@@ -7,6 +7,7 @@ const config = require("./config/index.js");
 console.log(config);
 
 const port = process.env.PORT || config.port
+
 app.listen(port, () => {
     console.log(`Running on port ${port}`);
 })
