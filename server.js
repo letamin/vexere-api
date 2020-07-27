@@ -1,16 +1,21 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const _ = require("lodash");
 const app = express();
 const config = require("./config/index.js");
-
-console.log(config);
-
 const port = process.env.PORT || config.port
+
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
+    next();
+});
 
 app.listen(port, () => {
     console.log(`Running on port ${port}`);
 })
+
+console.log(config)
 
 mongoose.connect(config.mongoUri, {
     useUnifiedTopology: true,

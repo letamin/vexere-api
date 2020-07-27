@@ -2,7 +2,6 @@ const { Ticket } = require("../../../../models/Ticket");
 const { Trip } = require("../../../../models/Trip");
 const { Seat } = require("../../../../models/Seat");
 const { sendBookTicketEmail } = require("../../../../services/email/bookTicket");
-const { sendCancelTicketEmail } = require("../../../../services/email/cancelTicket");
 const _ = require("lodash");
 
 //book ticket
@@ -60,55 +59,6 @@ const createTicket = (req, res, next) => {
         })
 }
 
-const cancelTicket = (req, res, next) => {
-    const { tripId, seatCodes } = req.body;
-    const { _id: userId } = req.user;
-
-    console.log(tripId, seatCodes)
-
-    Trip.findById(tripId)
-        .populate("fromStationId")
-        .populate("toStationId")
-        .then(trip => {
-            if (!trip) return Promise.reject({
-                status: 404,
-                message: "Trip not found"
-            })
-
-            const bookedSeatCodes = trip.seats
-                .filter(seat => seat.isBooked)
-                .map(seat => seat.code);
-
-            const errSeatCodes = [];
-            seatCodes.forEach(code => {
-                if (bookedSeatCodes.indexOf(code) === -1) errSeatCodes.push(code);
-            });
-
-            if (!_.isEmpty(errSeatCodes)) return Promise.reject({
-                status: 400,
-                message: `Cannot cancel ticket for ${errSeatCodes.join(", ")}`
-            })
-
-            seatCodes.forEach(code => {
-                const seatIndex = trip.seats.findIndex(seat => seat.code === code);
-                trip.seats[seatIndex].isBooked = false;
-            })
-
-            return Promise.all([
-                seatCodes,
-                trip.save(),
-            ]);
-        })
-        .then(([ticket, trip]) => {
-            sendCancelTicketEmail(req.user, trip, ticket);
-            res.status(200).json(ticket);
-        })
-        .catch(err => {
-            if (err.status) return res.status(err.status).json({ message: err.message });
-            return res.json(err);
-        })
-}
-
 module.exports = {
-    createTicket, cancelTicket
+    createTicket
 }

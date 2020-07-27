@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 let port, mongoUri, secretKey, email, password;
-console.log('=====', process.env.STAGING_MONGO_URI)
+console.log('=====', process.env.NODE_ENV)
 switch (process.env.NODE_ENV) {
     case 'local':
         port = process.env.LOCAL_PORT
