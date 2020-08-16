@@ -13,15 +13,15 @@ module.exports.sendBookTicketEmail = (user, trip, ticket) => {
     requireTLS: true,
     requireSSL: true,
     auth: {
-      user: "minh.cybersoft@gmail.com",
-      pass: "HniM0109."
+      user: //email here
+      pass: //password here
     }
   }
 
   const transporter = nodemailer.createTransport(transport);
 
   const mailOptions = {
-    from: "minh.cybersoft@gmail.com",
+    from: //email here//,
     to: user.email,
     subject: "Mail xac nhan mua ve thanh cong",
     html: compiledTemplate.render({
